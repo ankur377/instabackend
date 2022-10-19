@@ -9,7 +9,7 @@ $ npm install
 
 ```bash
 # development
-$ npm run start
+$ nodemon
 ```
 
 
