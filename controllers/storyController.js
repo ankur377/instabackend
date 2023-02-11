@@ -1,7 +1,6 @@
-const db = require('../../helper/database');
 const fs = require('fs');
 const cron = require("node-cron");
-const { Story } = require('../../models/index');
+const { Story } = require('../models/story');
 
 
 module.exports = {

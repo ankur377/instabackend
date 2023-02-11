@@ -1,7 +1,5 @@
-const db = require('../../helper/database');
-const fs = require('fs');
-const { Post } = require('../../models/index');
-const { User } = require('../../models/index');
+const { Post } = require('../models/post');
+const { User } = require('../models/auth');
 
 module.exports = {
     createPost: async (req, res) => {

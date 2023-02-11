@@ -1,7 +1,6 @@
-const db = require('../../helper/database');
 const fs = require('fs');
-const { User } = require('../../models/index');
-const { Reel } = require('../../models/index');
+const { User } = require('../models/auth');
+const { Reel } = require('../models/reels');
 module.exports = {
     createReel: async (req, res) => {
         const newReel = new Reel({
