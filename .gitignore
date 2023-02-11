@@ -8,4 +8,4 @@ public
 products
 controllers/productController.js
 routes/product.js
-models/product.js
+models/products.js
