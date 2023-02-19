@@ -9,10 +9,12 @@ const storySchema = new mongoose.Schema({
     post: {
         type: Array,
         default: [],
+        ref:'users',
         require: true
     },
     likes: {
         type: Array,
+        ref:'users',
         default: []
     },
 },

@@ -1,14 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const allStoryController = require('../controllers/storyController');
+const { createStory, deleteStory } = require('../controllers/storyController');
 const file = require('../middleware/upload');
 
 
-//TODO:CREATE STORY ROUTE
-router.post("/story", file.story, allStoryController.createStory);
+router.post('/story', file.story, (req, res) => {
+    try {
+        log.debug("POST: /api/story");
+        createStory(req, res)
+    } catch {
+        log.error("POST: /api/story", error);
+        res.customRes(error.message);
+    }
 
-//TODO:DELETE STORY ROUTE
-router.delete("/story/:id", allStoryController.deleteStory);
+});
 
+router.delete('/story/:id', (req, res) => {
+    try {
+        log.debug("POST: /api/story/:id");
+        deleteStory(req, res)
+    } catch {
+        log.error("POST: /api/story/:id", error);
+        res.customRes(error.message);
+    }
+})
 
 module.exports = router

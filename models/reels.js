@@ -13,10 +13,12 @@ const reelsSchema = new mongoose.Schema({
     reel: {
         type: String,
         default: [],
+        ref:'users',
         require: true
     },
     likes: {
         type: Array,
+        ref:'users',
         default: []
     },
 },

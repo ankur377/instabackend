@@ -13,10 +13,12 @@ const postSchema = new mongoose.Schema({
     img: {
         type: Array,
         default: [],
+        ref: 'users',
         require: true
     },
     likes: {
         type: Array,
+        ref: 'users',
         default: []
     },
 },

@@ -1,24 +1,62 @@
 const express = require("express");
 const router = express.Router();
-const allReelsController = require('../controllers/reelControllers');
 const file = require('../middleware/upload');
+const { createReel, deleteReel, likeDislike, getReel, timeLineReel } = require('../controllers/reelControllers');
 
 
 
-//TODO:CREATE REELS ROUTE
-router.post("/reel", file.upload, allReelsController.createReel);
+router.post('/reel', file.uploads, (req, res) => {
+    try {
+        log.debug("POST: /api/reel");
+        createReel(req, res)
+    } catch {
+        log.error("POST: /api/reel", error);
+        res.customRes(error.message);
+    }
 
-//TODO:DELETE REELS ROUTE
-router.delete("/reel/:id", allReelsController.deleteReel);
+});
 
-//TODO:LIKE DISLIKE REEL ROUTE
-router.put("/reel/:id/like", allReelsController.likeDislike);
+router.get('/reel/:id', (req, res) => {
+    getReel(req, res)
+        .then((response) => {
+            log.debug("GET: /api/reel/:id");
+            res.send(response);
+        }).catch((error) => {
+            log.error("GET: /api/reel/:id", error);
+            res.customRes(error.message);
+        })
+});
 
-//TODO:GET A REEL ROUTE
-router.get("/reel/:id", allReelsController.getReel);
 
-//TODO:TIMELINE REEL ROUTE 
-router.get("/reel/timeline/all", allReelsController.timeLineReel);
+router.delete('/reel/:id', (req, res) => {
+    try {
+        log.debug("DELETE: /api/reel/:id");
+        deleteReel(req, res)
+    } catch {
+        log.error("DELETE: /api/reel/:id", error);
+        res.customRes(error.message);
+    }
+});
 
+router.put('/reel/:id/like', (req, res) => {
+    try {
+        log.debug("PUT: /api/reel/:id/like");
+        likeDislike(req, res)
+    } catch {
+        log.error("PUT: /api/reel/:id/like", error);
+        res.customRes(error.message);
+    }
+});
+
+router.get('/reel/timeline/all', (req, res) => {
+    timeLineReel(req, res)
+        .then((response) => {
+            log.debug("GET: /api/reel/timeline/all");
+            res.send(response);
+        }).catch((error) => {
+            log.error("GET: /api/reel/timeline/all", error);
+            res.customRes(error.message);
+        })
+});
 
 module.exports = router
