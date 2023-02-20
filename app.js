@@ -6,14 +6,8 @@ const { responseMiddleware } = require('./helper/response')
 require('dotenv').config();
 const app = express();
 
-app.use('/products', express.static(process.cwd() + '/products'))
+// app.use('/products', express.static(process.cwd() + '/products'))
 // app.use('/api', jsonParser,cors({origin:"http://localhost:3000"}), routesApi);
-
-
-
-// const listener = app.listen(process.env.PORT || 5000, () => {
-//     console.log('Your App is listening on port http://localhost:' + listener.address().port)    
-// })
 
 
 
@@ -46,7 +40,9 @@ function enableCORS(expressInstance) {
 
 // Attach BodyParser
 function attachBodyParser(expressInstance) {
-    expressInstance.use(bodyParser.json({ limit: '1000mb' }));
+    expressInstance.use(bodyParser.json({
+        limit: '1000mb'
+    }));
     expressInstance.use(bodyParser.urlencoded({
         extended: true
     }));
