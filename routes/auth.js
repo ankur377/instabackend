@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const log = require('../helper/logger');
+const { verifyToken } = require('../middleware/token');
 
 const { getUserDetail, getUsers, registerUser, loginUser, deleteUser, updateUser } = require('../controllers/auth/auth');
 
@@ -37,7 +38,7 @@ router.get('/users', (req, res) => {
         })
 });
 
-router.get('/all/users', (req, res) => {
+router.get('/all/users', verifyToken, (req, res) => {
     getUserDetail(req, res)
         .then((response) => {
             log.debug("GET: /api/auth/all/users");

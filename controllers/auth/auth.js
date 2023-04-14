@@ -1,5 +1,6 @@
 const { User } = require('../../models/auth');
 const bcrypt = require('bcrypt');
+const { generateToken } = require('../../middleware/token');
 
 module.exports = {
 
@@ -56,16 +57,17 @@ module.exports = {
 
         let user = await User.findOne({ email: req.body.email });
         if (!user) {
-            res.send("This User Is Not Found");
+            res.status(404).send("This User Is Not Found");
         }
         try {
             if (await bcrypt.compare(req.body.password, user.password)) {
-                res.send(user);
+                const token = await generateToken(user);
+                res.send(token);
             } else {
-                res.send("Your Password is Wrong");
+                res.status(401).send("Your Password is Wrong");
             }
-        } catch {
-            res.status(500).send()
+        } catch (error) {
+            res.status(500).send(error);
         }
     },
     deleteUser: async (req, res) => {
