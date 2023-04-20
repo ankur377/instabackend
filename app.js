@@ -5,7 +5,7 @@ const routesApi = require('./routes/index');
 const { responseMiddleware } = require('./helper/response')
 require('dotenv').config();
 const app = express();
-
+require('./cron/index');
 // app.use('/products', express.static(process.cwd() + '/products'))
 // app.use('/api', jsonParser,cors({origin:"http://localhost:3000"}), routesApi);
 

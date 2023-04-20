@@ -11,9 +11,9 @@ module.exports = {
             posts.push(file);
         });
         const newPost = new Post({
-            userId: req.body.userId,
-            img: posts,
-            desc: req.body.desc
+            userId: req.user.user._id,
+            post: posts,
+            description: req.body.description
         });
         try {
             const savedPost = await newPost.save();
@@ -51,11 +51,11 @@ module.exports = {
     likeDislike: async (req, res) => {
         try {
             const post = await Post.findById(req.params.id);
-            if (!post.likes.includes(req.body.userId)) {
-                await post.updateOne({ $push: { likes: req.body.userId } });
+            if (!post.likes.includes(req.user.user._id)) {
+                await post.updateOne({ $push: { likes: req.user.user._id } });
                 res.status(200).json("The post been liked");
             } else {
-                await post.updateOne({ $pull: { likes: req.body.userId } });
+                await post.updateOne({ $pull: { likes: req.user.user._id } });
                 res.status(200).json("The Post been disliked");
             }
         } catch (err) {

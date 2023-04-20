@@ -1,7 +1,6 @@
-const fs = require('fs');
-const cron = require("node-cron");
 const { Story } = require('../models/story');
-
+var cron = require('node-cron');
+const moment = require("moment");
 
 module.exports = {
     createStory: async (req, res) => {
@@ -20,26 +19,20 @@ module.exports = {
             storys.push(file);
         });
         const newStory = new Story({
-            userId: req.body.userId,
-            post: storys,
+            userId: req.user.user._id,
+            story: storys,
         });
         try {
             const savedStory = await newStory.save();
-            // console.log(savedStory);
-            // const story = savedStory._id.toString();
-            // await Story.findById(story).then((stories) => {
-            //     cron.schedule("*/60 * * * * *", async () => {
-            //         try {
-            //             await stories.deleteOne();
-            //             console.log("the story has been deleted");
-            //         } catch (err) {
-            //             console.log(err);
-            //         }
-            //     });
             res.status(200).json(savedStory);
-            // }).catch((error) => {
-            //     console.log(error);
-            // });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
+    getStory: async (req, res) => {
+        try {
+            const stories = await Story.find({ userId: req.user.user._id });
+            res.send(stories);
         } catch (err) {
             res.status(500).json(err);
         }

@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');
-
+Schema = mongoose.Schema;
 
 const storySchema = new mongoose.Schema({
     userId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'users',
         require: true
     },
-    post: {
+    story: {
         type: Array,
         default: [],
-        ref:'users',
+        ref: 'users',
         require: true
     },
     likes: {
         type: Array,
-        ref:'users',
+        ref: 'users',
         default: []
     },
 },

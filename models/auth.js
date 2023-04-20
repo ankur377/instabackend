@@ -41,19 +41,29 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    desc: {
+    bio: {
         type: String,
         default: false
     },
-    city: {
-        type: String
+    country: {
+        type: String,
+        default: null
     },
-    from: {
-        type: String
+    state: {
+        type: String,
+        default: null
+    },
+    city: {
+        type: String,
+        default: null
+    },
+    number: {
+        type: Number,
+        default: null
     },
     relationship: {
         type: Number,
-        enum: [1, 2, 3]
+        enum: [1, 2]
     },
 },
     { timestamps: true }

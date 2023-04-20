@@ -1,6 +1,6 @@
 const path = require('path');
 const multer = require('multer');
-
+const moment = require('moment');
 
 module.exports = {
     uploads: multer({
@@ -9,7 +9,13 @@ module.exports = {
                 cb(null, "uploads")
             },
             filename: function (req, file, cb) {
-                cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+                let ext = path.extname(file.originalname);
+                let filename = file.fieldname + "-" + Date.now();
+                if (file.mimetype.includes("video")) {
+                    filename += "-reels";
+                }
+                filename += ext;
+                cb(null, filename);
             }
         })
     }).array("post"),

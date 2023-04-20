@@ -1,15 +1,14 @@
 // import packages
 let router = require('express').Router();
+const { verifyToken } = require('../middleware/token');
 
 router.use('/auth',require('./auth'));
 
-router.use('/',require('./follow-Unfollow'));
+router.use('/',verifyToken,require('./follow-Unfollow'));
 
-router.use('/',require('./post'));
+router.use('/',verifyToken,require('./post'));
 
-router.use('/',require('./reels'));
-
-router.use('/',require('./story'));
+router.use('/',verifyToken,require('./story'));
 
 
 module.exports = router;

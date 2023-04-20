@@ -27,13 +27,13 @@ router.post('/login', (req, res) => {
         })
 });
 
-router.get('/users', (req, res) => {
+router.get('/users/:id', (req, res) => {
     getUsers(req, res)
         .then((response) => {
-            log.debug("GET: /api/auth/users");
+            log.debug("GET: /api/auth/users/:id");
             res.send(response);
         }).catch((error) => {
-            log.error("GET: /api/auth/users", error);
+            log.error("GET: /api/auth/users/:id", error);
             res.customRes(error.message);
         })
 });

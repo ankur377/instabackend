@@ -6,10 +6,10 @@ const file = require('../middleware/upload');
 const { createPost, updatePost, deletePost, likeDislike, getPost, timeLinePost } = require('../controllers/postControllers');
 
 
-router.post('/post', file.uploads, (req, res) => {
+router.post('/post',  file.uploads, (req, res) => {
     try {
         log.debug("POST: /api/post");
-        createPost(req, res)
+        createPost(req, res);
     } catch {
         log.error("POST: /api/post", error);
         res.customRes(error.message);
@@ -39,6 +39,26 @@ router.get('/post/:id', (req, res) => {
         })
 });
 
+router.put('/post/like/:id', (req, res) => {
+    try {
+        log.debug("POST: /api/post/like/:id");
+        likeDislike(req, res);
+    } catch {
+        log.error("POST: /api/post/like/:id", error);
+        res.customRes(error.message);
+    }
+});
+
+router.delete('/post/:id', (req, res) => {
+    try {
+        log.debug("POST: /api/post/:id");
+        deletePost(req, res);
+    } catch {
+        log.error("POST: /api/post/:id", error);
+        res.customRes(error.message);
+    }
+})
+
 router.get('/post/timeline/all', (req, res) => {
     timeLinePost(req, res)
         .then((response) => {
@@ -49,26 +69,5 @@ router.get('/post/timeline/all', (req, res) => {
             res.customRes(error.message);
         })
 });
-
-router.put('/post/:id/like', (req, res) => {
-    try {
-        log.debug("POST: /api/post/:id/like");
-        likeDislike(req, res)
-    } catch {
-        log.error("POST: /api/post/:id/like", error);
-        res.customRes(error.message);
-    }
-})
-
-
-router.delete('/post/:id', (req, res) => {
-    try {
-        log.debug("POST: /api/post/:id");
-        deletePost(req, res)
-    } catch {
-        log.error("POST: /api/post/:id", error);
-        res.customRes(error.message);
-    }
-})
 
 module.exports = router

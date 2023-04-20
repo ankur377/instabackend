@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { createStory, deleteStory } = require('../controllers/storyController');
+const { createStory, deleteStory, getStory } = require('../controllers/storyController');
 const file = require('../middleware/upload');
+const log = require('../helper/logger');
+const { verifyToken } = require('../middleware/token');
 
 
-router.post('/story', file.story, (req, res) => {
+router.post('/story', verifyToken, file.story, (req, res) => {
     try {
         log.debug("POST: /api/story");
         createStory(req, res)
@@ -13,6 +15,16 @@ router.post('/story', file.story, (req, res) => {
         res.customRes(error.message);
     }
 
+});
+
+router.get('/stories', verifyToken, (req, res) => {
+    try {
+        log.debug("GET: /api/stories");
+        getStory(req, res)
+    } catch {
+        log.error("GET: /api/stories", error);
+        res.customRes(error.message);
+    }
 });
 
 router.delete('/story/:id', (req, res) => {
