@@ -3,7 +3,7 @@ const router = express.Router();
 const log = require('../helper/logger');
 
 const file = require('../middleware/upload');
-const { createPost, updatePost, deletePost, likeDislike, getPost, timeLinePost } = require('../controllers/postControllers');
+const { createPost, updatePost, deletePost, likeDislike, getPost, timeLinePost } = require('../controllers/post');
 
 
 router.post('/post',  file.uploads, (req, res) => {

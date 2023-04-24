@@ -3,7 +3,7 @@ const router = express.Router();
 const log = require('../helper/logger');
 
 
-const { followunfollowController } = require('../controllers/followingController');
+const { followunfollowController } = require('../controllers/followunfollow');
 
 
 router.put('/follow-unfollow/:id', (req, res) => {
