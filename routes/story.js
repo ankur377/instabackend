@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createStory, deleteStory, getStory, likeDislike } = require('../controllers/storyController');
+const { createStory, deleteStory, getStory, likeDislike } = require('../controllers/story');
 const file = require('../middleware/upload');
 const log = require('../helper/logger');
 const { verifyToken } = require('../middleware/token');
