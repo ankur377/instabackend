@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-    Schema = mongoose.Schema;
+Schema = mongoose.Schema;
 
 const postSchema = new mongoose.Schema({
     userId: {
@@ -16,6 +16,11 @@ const postSchema = new mongoose.Schema({
         default: [],
         ref: 'users',
         require: true
+    },
+    comments: {
+        ref: "Comments",
+        type: Array,
+        default: []
     },
     likes: {
         type: Array,

@@ -13,10 +13,14 @@ const storySchema = new mongoose.Schema({
         ref: 'users',
         require: true
     },
-    likes: {
-        type: Array,
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         default: []
+    }],
+    isDeleted: {
+        type: Boolean,
+        default: false
     },
 },
     { timestamps: true }

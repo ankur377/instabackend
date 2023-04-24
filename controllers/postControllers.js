@@ -4,19 +4,32 @@ const { User } = require('../models/auth');
 module.exports = {
     createPost: async (req, res) => {
         let posts = [];
+        const UserId = req.user.user._id;
         req.files.forEach(element => {
             const file = {
-                path: element.path
+                fieldname: element.fieldname,
+                originalname: element.originalname,
+                encoding: element.encoding,
+                mimetype: element.mimetype,
+                destination: element.destination,
+                filename: element.filename,
+                path: element.path,
+                size: element.size,
             }
             posts.push(file);
         });
         const newPost = new Post({
-            userId: req.user.user._id,
+            userId: UserId,
             post: posts,
             description: req.body.description
         });
         try {
             const savedPost = await newPost.save();
+            const setPostinUser = await User.findByIdAndUpdate(
+                UserId,
+                { $push: { totalposts: savedPost._id } },
+                { new: true }
+            );
             res.status(200).json(savedPost);
         } catch (err) {
             res.status(500).json(err);
@@ -25,7 +38,7 @@ module.exports = {
     updatePost: async (req, res) => {
         try {
             const post = await Post.findById(req.params.id);
-            if (post.userId === req.body.userId) {
+            if (post.userId === req.user.user._id) {
                 await post.updateOne({ $set: req.body });
                 res.status(200).json("the post has been updated");
             } else {
@@ -38,7 +51,7 @@ module.exports = {
     deletePost: async (req, res) => {
         try {
             const post = await Post.findById(req.params.id);
-            if (post.userId === req.body.userId) {
+            if (post.userId === req.user.user._id) {
                 await post.deleteOne();
                 res.status(200).json("the post has been deleted");
             } else {
@@ -72,7 +85,7 @@ module.exports = {
     },
     timeLinePost: async (req, res) => {
         try {
-            const currentUser = await User.findById(req.body.userId);
+            const currentUser = await User.findById(req.user.user._id);
             const userPosts = await Post.find({ userId: currentUser._id });
             const friendPosts = await Promise.all(
                 currentUser.followings.map((friendId) => {

@@ -1,10 +1,10 @@
 const { Story } = require('../models/story');
-var cron = require('node-cron');
-const moment = require("moment");
+const { User } = require('../models/auth');
 
 module.exports = {
     createStory: async (req, res) => {
         let storys = [];
+        const UserId = req.user.user._id;
         req.files.forEach(element => {
             const file = {
                 fieldname: element.fieldname,
@@ -19,11 +19,24 @@ module.exports = {
             storys.push(file);
         });
         const newStory = new Story({
-            userId: req.user.user._id,
+            userId: UserId,
             story: storys,
+            isDeleted: false,
         });
         try {
             const savedStory = await newStory.save();
+            const setStoryInUser = await User.findByIdAndUpdate(
+                UserId,
+                {
+                    $push: {
+                        stories: savedStory._id,
+                    },
+                    $addToSet: {
+                        storiesMemories: savedStory._id,
+                    },
+                },
+                { new: true }
+            );
             res.status(200).json(savedStory);
         } catch (err) {
             res.status(500).json(err);
@@ -53,15 +66,18 @@ module.exports = {
     likeDislike: async (req, res) => {
         try {
             const story = await Story.findById(req.params.id);
-            if (!story.likes.includes(req.body.userId)) {
-                await story.updateOne({ $push: { likes: req.body.userId } });
+            if (!story) {
+                return res.status(404).json("Story Not Found");
+            }
+            if (!story.likes.includes(req.user.user._id)) {
+                await story.updateOne({ $push: { likes: req.user.user._id } });
                 res.status(200).json("The story been liked");
             } else {
-                await story.updateOne({ $pull: { likes: req.body.userId } });
+                await story.updateOne({ $pull: { likes: req.user.user._id } });
                 res.status(200).json("The story been disliked");
             }
         } catch (err) {
             res.status(500).json(err);
         }
-    },
+    }
 }

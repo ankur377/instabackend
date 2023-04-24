@@ -31,10 +31,27 @@ const userSchema = new mongoose.Schema({
     },
     followers: {
         type: Array,
+        ref: 'users',
         default: []
     },
     followings: {
         type: Array,
+        ref: 'users',
+        default: []
+    },
+    totalposts: {
+        type: Array,
+        ref: 'posts',
+        default: []
+    },
+    stories: {
+        type: Array,
+        ref: 'stories',
+        default: []
+    },
+    storiesMemories: {
+        type: Array,
+        ref: 'stories',
         default: []
     },
     isAdmin: {
@@ -43,7 +60,7 @@ const userSchema = new mongoose.Schema({
     },
     bio: {
         type: String,
-        default: false
+        default: null
     },
     country: {
         type: String,

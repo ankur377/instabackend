@@ -1,17 +1,18 @@
 const express = require("express");
 const router = express.Router();
+const log = require('../helper/logger');
 
 
 const { followunfollowController } = require('../controllers/followingController');
 
 
-router.put('/:id/follow-unfollow', (req, res) => {
+router.put('/follow-unfollow/:id', (req, res) => {
     followunfollowController(req, res)
         .then((response) => {
-            log.debug("PUT: /api//:id/follow-unfollow");
+            log.debug("PUT: /api/follow-unfollow/:id");
             res.send(response);
         }).catch((error) => {
-            log.error("PUT: /api//:id/follow-unfollow", error);
+            log.error("PUT: /api/follow-unfollow/:id", error);
             res.customRes(error.message);
         })
 });
