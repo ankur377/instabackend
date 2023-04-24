@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const log = require('../helper/logger');
 
-const { comment, reply, getComment, likeDislike } = require('../controllers/commentReplyController');
+const { comment, reply, getComment, likeDislike } = require('../controllers/commentReply');
 
 
 router.post('/comment/:id', (req, res) => {
