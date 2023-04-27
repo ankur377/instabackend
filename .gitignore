@@ -9,3 +9,4 @@ products
 controllers/productController.js
 routes/product.js
 models/products.js
+helper/email.js
