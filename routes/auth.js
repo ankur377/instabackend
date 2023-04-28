@@ -49,7 +49,7 @@ router.get('/all/users', verifyToken, (req, res) => {
         })
 });
 
-router.put('/users/:id', (req, res) => {
+router.put('/users/:id', verifyToken, (req, res) => {
     try {
         log.debug("POST: /api/auth/users/:id");
         updateUser(req, res)
@@ -60,7 +60,7 @@ router.put('/users/:id', (req, res) => {
 })
 
 
-router.delete('/users/:id', (req, res) => {
+router.delete('/users/:id', verifyToken, (req, res) => {
     try {
         log.debug("POST: /api/auth/users/:id");
         deleteUser(req, res)

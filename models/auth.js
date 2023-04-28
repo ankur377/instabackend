@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
         ref: 'stories',
         default: []
     },
-    isAdmin: {
+    isPublic: {
         type: Boolean,
         default: false
     },

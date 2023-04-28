@@ -22,36 +22,38 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    registerUser: function (req, res) {
-        User.find({ email: req.body.email })
-            .then(user => {
-                if (user.length >= 1) {
-                    return res.status(409).json({
-                        message: 'Mail Exists'
-                    });
-                } else {
-                    bcrypt.hash(req.body.password, 10, (err, hash) => {
-                        if (err) {
-                            return res.status(500).json({
-                                error: err
-                            })
-                        } else {
-                            const user = new User({
-                                username: req.body.username,
-                                fullname: req.body.fullname,
-                                email: req.body.email,
-                                password: hash
-                            });
-                            user.save().then((result) => {
-                                res.send(result);
-                            }).catch((error) => { res.send(error) })
-                        }
-                    });
-                }
-            })
-            .catch((error) => {
-                res.send(error);
+    registerUser: async function (req, res) {
+        try {
+            const password = req.body.password;
+            const usernameExists = await User.find({ username: req.body.username });
+            if (usernameExists.length >= 1) {
+                return res.status(403).json({
+                    message: 'Username Already Exists'
+                });
+            }
+            const emailExists = await User.find({ email: req.body.email });
+            if (emailExists.length >= 1) {
+                return res.status(403).json({
+                    message: 'Mail Exists'
+                });
+            }
+            if (password == null || password == "" || password == undefined) {
+                return res.status(403).json({
+                    message: 'Please fill the password'
+                });
+            }
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const user = new User({
+                username: req.body.username,
+                fullname: req.body.fullname,
+                email: req.body.email,
+                password: hashedPassword,
             });
+            const savedUser = await user.save();
+            res.send(savedUser);
+        } catch (error) {
+            res.send(error);
+        }
     },
     loginUser: async (req, res) => {
 
@@ -71,35 +73,58 @@ module.exports = {
         }
     },
     deleteUser: async (req, res) => {
-        if (req.params.id || req.body.isAdmin) {
-            try {
-                await User.findByIdAndDelete(req.params.id);
-                res.status(200).json("Account has been deleted");
-            } catch (err) {
-                return res.status(500).json(err)
-            }
-        } else {
-            return res.status(403).json("You can deltele only your account!");
+        if (req.params.id != req.user.user._id) {
+            return res.status(403).json({
+                message: 'You can deltele only your account!'
+            });
         }
+        try {
+            await User.findByIdAndDelete(req.params.id);
+            return res.status(200).json({
+                message: 'Account has been deleted'
+            });
+        } catch (err) {
+            return res.status(500).json(err)
+        }
+
     },
-    updateUser: async (req, res) => {
-        if (req.params.id || req.body.isAdmin) {
-            if (req.body.password) {
-                try {
-                    const salt = await bcrypt.genSalt(10);
-                    req.body.password = await bcrypt.hash(req.body.password, salt);
-                } catch (err) {
-                    return res.status(500).json(err)
-                }
+    updateUser: async function (req, res) {
+        try {
+            const userId = req.params.id;
+            const password = req.body.password;
+            const user = await User.findById(userId);
+
+            if (!user) {
+                return res.status(404).json({
+                    message: 'User not found'
+                });
             }
-            try {
-                const user = await User.findByIdAndUpdate(req.params.id, { $set: req.body });
-                res.status(200).json("Account has been updated");
-            } catch (err) {
-                return res.status(500).json(err)
+
+            // Check if email is already in use by another user
+            const emailExists = await User.findOne({ email: req.body.email, _id: { $ne: userId } });
+            if (emailExists) {
+                return res.status(403).json({
+                    message: 'Email is already in use'
+                });
             }
-        } else {
-            return res.status(403).json("You can update only your account!");
+
+            // Update the user object
+            user.username = req.body.username || user.username;
+            user.fullname = req.body.fullname || user.fullname;
+            user.email = req.body.email || user.email;
+            if (password) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                user.password = hashedPassword;
+            }
+
+            // Save the updated user object
+            const updatedUser = await user.save();
+            return res.status(200).json({
+                message: updatedUser
+            });
+        } catch (error) {
+            res.status(500).send(error);
         }
     }
+
 }
