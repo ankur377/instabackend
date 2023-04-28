@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const log = require('../helper/logger');
 
-const { comment, reply, getComment, likeDislike } = require('../controllers/commentReply');
-
+const { comment, reply, getComment } = require('../controllers/commentReply');
+const { likeDislike } = require('../controllers/comman');
 
 router.post('/comment/:id', (req, res) => {
     comment(req, res)
@@ -42,7 +42,7 @@ router.get('/comments', (req, res) => {
 router.put('/comments/like/:id', (req, res) => {
     try {
         log.debug("POST: /api/comments/like/:id");
-        likeDislike(req, res);
+        likeDislike(req, res,'COMMENT');
     } catch {
         log.error("POST: /api/comments/like/:id", error);
         res.customRes(error.message);

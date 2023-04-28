@@ -48,33 +48,6 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    deletePost: async (req, res) => {
-        try {
-            const post = await Post.findById(req.params.id);
-            if (post.userId === req.user.user._id) {
-                await post.deleteOne();
-                res.status(200).json("the post has been deleted");
-            } else {
-                res.status(403).json("You can delete only your post")
-            }
-        } catch (err) {
-            res.status(500).json(err);
-        }
-    },
-    likeDislike: async (req, res) => {
-        try {
-            const post = await Post.findById(req.params.id);
-            if (!post.likes.includes(req.user.user._id)) {
-                await post.updateOne({ $push: { likes: req.user.user._id } });
-                res.status(200).json("The post been liked");
-            } else {
-                await post.updateOne({ $pull: { likes: req.user.user._id } });
-                res.status(200).json("The Post been disliked");
-            }
-        } catch (err) {
-            res.status(500).json(err);
-        }
-    },
     getPost: async (req, res) => {
         try {
             const post = await Post.findById(req.params.id);

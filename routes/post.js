@@ -3,10 +3,11 @@ const router = express.Router();
 const log = require('../helper/logger');
 
 const file = require('../middleware/upload');
-const { createPost, updatePost, deletePost, likeDislike, getPost, timeLinePost } = require('../controllers/post');
+const { createPost, updatePost, getPost, timeLinePost } = require('../controllers/post');
+const { action } = require('../controllers/comman');
+const { verifyToken } = require('../middleware/token');
 
-
-router.post('/post',  file.uploads, (req, res) => {
+router.post('/post', verifyToken, file.uploads, (req, res) => {
     try {
         log.debug("POST: /api/post");
         createPost(req, res);
@@ -17,7 +18,7 @@ router.post('/post',  file.uploads, (req, res) => {
 
 });
 
-router.put('/post/:id', (req, res) => {
+router.put('/post/:id', verifyToken, (req, res) => {
     updatePost(req, res)
         .then((response) => {
             log.debug("POST: /api/post/:id");
@@ -28,7 +29,7 @@ router.put('/post/:id', (req, res) => {
         })
 });
 
-router.get('/post/:id', (req, res) => {
+router.get('/post/:id', verifyToken, (req, res) => {
     getPost(req, res)
         .then((response) => {
             log.debug("GET: /api/post/:id");
@@ -39,20 +40,20 @@ router.get('/post/:id', (req, res) => {
         })
 });
 
-router.put('/post/like/:id', (req, res) => {
+router.put('/post/like/:id', verifyToken, (req, res) => {
     try {
         log.debug("POST: /api/post/like/:id");
-        likeDislike(req, res);
+        action(req, res, 'POST', 'Like');
     } catch {
         log.error("POST: /api/post/like/:id", error);
         res.customRes(error.message);
     }
 });
 
-router.delete('/post/:id', (req, res) => {
+router.delete('/post/:id', verifyToken, (req, res) => {
     try {
         log.debug("POST: /api/post/:id");
-        deletePost(req, res);
+        action(req, res, 'POST', 'Delete');
     } catch {
         log.error("POST: /api/post/:id", error);
         res.customRes(error.message);

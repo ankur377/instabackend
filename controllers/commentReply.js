@@ -62,19 +62,4 @@ module.exports = {
         const filteredComments = getallComment.filter(comment => comment.postID != null);
         res.send(filteredComments);
     },
-
-    likeDislike: async (req, res) => {
-        try {
-            const comment = await Comment.findById(req.params.id);
-            if (!comment.likes.includes(req.user.user._id)) {
-                await comment.updateOne({ $push: { likes: req.user.user._id } });
-                res.status(200).json("The comment been liked");
-            } else {
-                await comment.updateOne({ $pull: { likes: req.user.user._id } });
-                res.status(200).json("The comment been disliked");
-            }
-        } catch (err) {
-            res.status(500).json(err);
-        }
-    }
 }

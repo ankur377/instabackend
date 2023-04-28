@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { createStory, deleteStory, getStory, likeDislike } = require('../controllers/story');
+const { createStory, deleteStory, getStory } = require('../controllers/story');
 const file = require('../middleware/upload');
 const log = require('../helper/logger');
 const { verifyToken } = require('../middleware/token');
+const { action } = require('../controllers/comman');
 
 
 router.post('/story', verifyToken, file.story, (req, res) => {
@@ -30,7 +31,7 @@ router.get('/stories', verifyToken, (req, res) => {
 router.delete('/story/:id', (req, res) => {
     try {
         log.debug("POST: /api/story/:id");
-        deleteStory(req, res)
+        action(req, res, 'STORY', 'Delete')
     } catch {
         log.error("POST: /api/story/:id", error);
         res.customRes(error.message);
@@ -40,7 +41,7 @@ router.delete('/story/:id', (req, res) => {
 router.put('/story/like/:id', (req, res) => {
     try {
         log.debug("POST: /api/story/like/:id");
-        likeDislike(req, res);
+        action(req, res, 'STORY', 'Like');
     } catch {
         log.error("POST: /api/story/like/:id", error);
         res.customRes(error.message);
