@@ -23,7 +23,9 @@ const commentSchema = new mongoose.Schema({
         ref: 'Comments'
     },
     replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
-});
+},
+    { timestamps: true }
+);
 
 const Comment = mongoose.model('Comment', commentSchema);
 

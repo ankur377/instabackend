@@ -1,46 +1,35 @@
 const { Post } = require('../models/post');
 const { Story } = require('../models/story');
 const { Comment } = require('../models/comment');
-
+const models = {
+    post: Post,
+    story: Story,
+    comment: Comment
+}
 module.exports = {
     action: async (req, res, modelName, actionType) => {
         const paramId = req.params.id;
         const userId = req.user.user._id;
         try {
             let item;
-            switch (modelName) {
-                case 'POST':
-                    item = await Post.findById(paramId);
-                    break;
-                case 'STORY':
-                    item = await Story.findById(paramId);
-                    break;
-                case 'COMMENT':
-                    item = await Comment.findById(paramId);
-                    break;
-                default:
-                    res.status(400).json("Invalid model name This Model Dose not Exists");
-                    return;
-            }
+            const modelType = models[modelName.toLowerCase()];
+            item = await modelType.findById(paramId);
             if (actionType === 'Like') {
-                if (!item.likes.includes(userId)) {
-                    await item.updateOne({ $push: { likes: userId } });
-                    res.status(200).json(`The ${modelName.toLowerCase()} has been liked`);
-                } else {
-                    await item.updateOne({ $pull: { likes: userId } });
-                    res.status(200).json(`The ${modelName.toLowerCase()} has been disliked`);
-                }
+                const actions = item.likes.includes(userId) ? '$pull' : '$push';
+                await item.updateOne({ [actions]: { likes: userId } });
+                const responseMessage = `The ${modelName.toLowerCase()} has been ${actions === '$push' ? 'liked' : 'disliked'}`;
+                return res.status(200).json({ message: responseMessage });
             }
+
             if (actionType === 'Delete') {
                 if (item.userId === userId) {
                     await item.deleteOne();
-                    res.status(200).json(`The ${modelName.toLowerCase()} has been deleted`);
+                    res.status(200).json(`The ${modelType.toLowerCase()} has been deleted`);
                 } else {
                     res.status(403).json(`You can delete only your post`);
                 }
             }
             if (actionType === 'Get') {
-                const modelType = modelName.charAt(0) + modelName.slice(1).toLowerCase();
                 try {
                     const user = await modelType.find();
                     return res.status(200).json({

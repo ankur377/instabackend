@@ -59,7 +59,9 @@ module.exports = {
 
         let user = await User.findOne({ email: req.body.email });
         if (!user) {
-            res.status(404).send("This User Is Not Found");
+            return res.status(400).json({
+                message: "This User Is Not Found"
+            });
         }
         try {
             if (await bcrypt.compare(req.body.password, user.password)) {
