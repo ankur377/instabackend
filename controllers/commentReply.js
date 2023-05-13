@@ -39,27 +39,19 @@ module.exports = {
             res.status(500).send({ error: err.message });
         }
     },
-
     getComment: async (req, res) => {
-        const getallComment = await Comment.find({}).populate({
-            path: 'replies',
-            populate: {
-                path: 'replies',
-                populate: {
-                    path: 'replies',
-                    populate: {
-                        path: 'replies',
-                        populate: {
-                            path: 'replies',
-                            populate: {
-                                path: 'replies'
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        const depth = 10; // Set your desired depth limit here
+        const getallComment = await Comment.find({}).populate(populateReplies(depth));
         const filteredComments = getallComment.filter(comment => comment.postID != null);
         res.send(filteredComments);
     },
 }
+function populateReplies(depth) {
+    if (depth === 0) {
+        return null;
+    }
+    return {
+        path: 'replies',
+        populate: populateReplies(depth - 1)
+    };
+};
