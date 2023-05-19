@@ -22,12 +22,14 @@ const userSchema = new mongoose.Schema({
         min: 6
     },
     profilePicture: {
-        type: String,
-        default: ""
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Files',
+        default: null
     },
     coverPicture: {
-        type: String,
-        default: ""
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Files',
+        default: null
     },
     followers: {
         type: Array,

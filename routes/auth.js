@@ -51,10 +51,10 @@ router.get('/all/users', verifyToken, (req, res) => {
 
 router.put('/users/:id', verifyToken, (req, res) => {
     try {
-        log.debug("POST: /api/auth/users/:id");
+        log.debug("PUT: /api/auth/users/:id");
         updateUser(req, res)
     } catch {
-        log.error("POST: /api/auth/users/:id", error);
+        log.error("PUT: /api/auth/users/:id", error);
         res.customRes(error.message);
     }
 })

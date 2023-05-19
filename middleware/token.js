@@ -3,7 +3,7 @@ const JWT_SECRET = "secretkey"
 
 function generateToken(user) {
     return new Promise((resolve, reject) => {
-        jwt.sign({ user }, JWT_SECRET, { expiresIn: "3000s" }, (err, token) => {
+        jwt.sign({ user }, JWT_SECRET, { expiresIn: "8760h" }, (err, token) => {
             if (err) {
                 reject(err);
             } else {

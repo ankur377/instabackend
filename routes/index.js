@@ -3,6 +3,7 @@ let router = require('express').Router();
 const { verifyToken } = require('../middleware/token');
 
 router.use('/auth', require('./auth'));
+router.use('/', require('./file'));
 router.use('/', require('./conversations'));
 router.use('/', require('./messages'));
 

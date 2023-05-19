@@ -31,4 +31,15 @@ module.exports = {
         })
     }).array("story"),
 
+    files: multer({
+        storage: multer.diskStorage({
+            destination: function (req, file, cb) {
+                cb(null, "public")
+            },
+            filename: function (req, file, cb) {
+                cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+            }
+        })
+    }).array("selfiee"),
+
 }

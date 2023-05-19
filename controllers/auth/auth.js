@@ -6,13 +6,21 @@ module.exports = {
 
     getUserDetail: async (req, res) => {
         try {
-            const user = await User.find();
-            res.status(200).json(user)
+          const user = await User.find().populate('profilePicture', 'path').populate('totalposts', 'post likes comments').populate({
+            path: 'followers followings',
+            select: 'profilePicture stories',
+            populate: {
+              path: 'profilePicture',
+              select: 'path'
+            },
+          });
+          res.status(200).send(user);
         } catch (err) {
-            res.status(500).json(err);
+          res.status(500).send(err);
+          // Remove the response above if you want to prevent multiple responses
         }
-
-    },
+      },
+      
     getUsers: async (req, res) => {
         try {
             const user = await User.findById(req.params.id);
@@ -57,7 +65,14 @@ module.exports = {
     },
     loginUser: async (req, res) => {
 
-        let user = await User.findOne({ email: req.body.email });
+        let user = await User.findOne({ email: req.body.email }).populate('profilePicture', 'path').populate('totalposts', 'post likes comments').populate({
+            path: 'followers',
+            select: 'profilePicture stories',
+            populate: {
+                path: 'profilePicture',
+                select: 'path'
+            },
+        });
         if (!user) {
             return res.status(400).json({
                 message: "This User Is Not Found"
@@ -66,7 +81,11 @@ module.exports = {
         try {
             if (await bcrypt.compare(req.body.password, user.password)) {
                 const token = await generateToken(user);
-                res.send(token);
+                return {
+                    token: token,
+                    user: user
+                };
+                // res.send(token);
             } else {
                 res.status(401).send("Your Password is Wrong");
             }
@@ -95,7 +114,6 @@ module.exports = {
             const userId = req.params.id;
             const password = req.body.password;
             const user = await User.findById(userId);
-
             if (!user) {
                 return res.status(404).json({
                     message: 'User not found'
@@ -114,13 +132,15 @@ module.exports = {
             user.username = req.body.username || user.username;
             user.fullname = req.body.fullname || user.fullname;
             user.email = req.body.email || user.email;
+            user.profilePicture = req.body.profilePicture || user.profilePicture;
+            console.log(req.body.profilePicture);
             if (password) {
                 const hashedPassword = await bcrypt.hash(password, 10);
                 user.password = hashedPassword;
             }
-
             // Save the updated user object
-            const updatedUser = await user.save();
+            const updatedUser = await user.save().populate('profilePicture', `path`);
+            console.log('done', updatedUser);
             return res.status(200).json({
                 message: updatedUser
             });
